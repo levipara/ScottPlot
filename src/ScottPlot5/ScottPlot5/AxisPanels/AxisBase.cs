@@ -6,6 +6,8 @@ public abstract class AxisBase : LabelStyleProperties
 {
     public bool IsVisible { get; set; } = true;
 
+    public bool IgnoreMouseInput { get; set; } = false;
+
     public abstract Edge Edge { get; }
 
     public virtual CoordinateRangeMutable Range { get; private set; } = CoordinateRangeMutable.NotSet;

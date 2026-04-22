@@ -105,8 +105,18 @@ public class MouseDragZoomRectangle(MouseButton button) : IUserActionResponse
 
             if (PlotBeingDragged.ZoomRectangle.IsVisible)
             {
-                PlotBeingDragged.Axes.GetAxes().OfType<IXAxis>().ToList().ForEach(PlotBeingDragged.ZoomRectangle.Apply);
-                PlotBeingDragged.Axes.GetAxes().OfType<IYAxis>().ToList().ForEach(PlotBeingDragged.ZoomRectangle.Apply);
+                foreach (IXAxis axis in PlotBeingDragged.Axes.GetAxes().OfType<IXAxis>())
+                {
+                    if (!axis.IgnoreMouseInput)
+                        PlotBeingDragged.ZoomRectangle.Apply(axis);
+                }
+
+                foreach (IYAxis axis in PlotBeingDragged.Axes.GetAxes().OfType<IYAxis>())
+                {
+                    if (!axis.IgnoreMouseInput)
+                        PlotBeingDragged.ZoomRectangle.Apply(axis);
+                }
+
                 PlotBeingDragged.ZoomRectangle.IsVisible = false;
                 return ResponseInfo.Refresh;
             }

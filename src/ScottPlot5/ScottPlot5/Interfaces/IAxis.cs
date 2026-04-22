@@ -16,6 +16,8 @@ public interface IAxis : IPanel
     double Min { get; set; }
     double Max { get; set; }
 
+    public bool IgnoreMouseInput { get; set; }
+
     /// <summary>
     /// Get the pixel position of a coordinate given the location and size of the data area
     /// </summary>

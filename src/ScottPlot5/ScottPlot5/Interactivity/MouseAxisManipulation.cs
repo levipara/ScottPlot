@@ -1,3 +1,5 @@
+using System.Data;
+
 namespace ScottPlot.Interactivity;
 
 #pragma warning disable CS0618 // disable obsolete Interaction warning
@@ -19,7 +21,7 @@ public static class MouseAxisManipulation
 
         var axisUnderMouse = plot.GetAxis(pixel);
 
-        if (axisUnderMouse is not null)
+        if (axisUnderMouse is not null && !axisUnderMouse.IgnoreMouseInput)
         {
             if (ChangeOpposingAxesTogether && axisUnderMouse.IsHorizontal())
             {
@@ -39,8 +41,17 @@ public static class MouseAxisManipulation
         else
         {
             // modify all axes
-            plot.Axes.XAxes.ForEach(xAxis => xAxis.Range.ZoomFrac(fracX, xAxis.GetCoordinate(pixel.X, dataRect)));
-            plot.Axes.YAxes.ForEach(yAxis => yAxis.Range.ZoomFrac(fracY, yAxis.GetCoordinate(pixel.Y, dataRect)));
+            foreach (IXAxis axis in plot.Axes.XAxes)
+            {
+                if (!axis.IgnoreMouseInput)
+                    axis.Range.ZoomFrac(fracX, axis.GetCoordinate(pixel.X, dataRect));
+            }
+
+            foreach (IYAxis axis in plot.Axes.YAxes)
+            {
+                if (!axis.IgnoreMouseInput)
+                    axis.Range.ZoomFrac(fracY, axis.GetCoordinate(pixel.Y, dataRect));
+            }
         }
     }
 
@@ -59,7 +70,7 @@ public static class MouseAxisManipulation
 
         PixelRect dataRect = plot.RenderManager.LastRender.DataRect;
 
-        if (axisUnderMouse is not null)
+        if (axisUnderMouse is not null && !axisUnderMouse.IgnoreMouseInput)
         {
             if (changeOpposingAxesTogether && axisUnderMouse.IsHorizontal())
             {
@@ -79,8 +90,17 @@ public static class MouseAxisManipulation
         else
         {
             // modify all axes
-            plot.Axes.XAxes.ForEach(xAxis => xAxis.Range.PanMouse(scaledDeltaX, dataRect.Width));
-            plot.Axes.YAxes.ForEach(yAxis => yAxis.Range.PanMouse(scaledDeltaY, dataRect.Height));
+            foreach (IXAxis axis in plot.Axes.XAxes)
+            {
+                if (!axis.IgnoreMouseInput)
+                    axis.Range.PanMouse(scaledDeltaX, dataRect.Width);
+            }
+
+            foreach (IYAxis axis in plot.Axes.YAxes)
+            {
+                if (!axis.IgnoreMouseInput)
+                    axis.Range.PanMouse(scaledDeltaY, dataRect.Height);
+            }
         }
     }
 
@@ -96,7 +116,7 @@ public static class MouseAxisManipulation
 
         PixelRect lastRenderDataRect = plot.RenderManager.LastRender.DataRect;
 
-        if (axisUnderMouse is not null)
+        if (axisUnderMouse is not null && !axisUnderMouse.IgnoreMouseInput)
         {
             if (changeOpposingAxesTogether && axisUnderMouse.IsHorizontal())
             {
@@ -117,8 +137,17 @@ public static class MouseAxisManipulation
         else
         {
             // modify all axes
-            plot.Axes.XAxes.ForEach(xAxis => xAxis.Range.ZoomMouseDelta(pixelDeltaX, lastRenderDataRect.Width));
-            plot.Axes.YAxes.ForEach(yAxis => yAxis.Range.ZoomMouseDelta(pixelDeltaY, lastRenderDataRect.Height));
+            foreach (IXAxis axis in plot.Axes.XAxes)
+            {
+                if (!axis.IgnoreMouseInput)
+                    axis.Range.ZoomMouseDelta(pixelDeltaX, lastRenderDataRect.Width);
+            }
+
+            foreach (IYAxis axis in plot.Axes.YAxes)
+            {
+                if (!axis.IgnoreMouseInput)
+                    axis.Range.ZoomMouseDelta(pixelDeltaY, lastRenderDataRect.Height);
+            }
         }
     }
 
@@ -128,7 +157,7 @@ public static class MouseAxisManipulation
         mouseNow = mouseNow.Divide(plot.ScaleFactorF);
 
         IAxis? axisUnderMouse = plot.GetAxis(mouseDown);
-        if (axisUnderMouse is not null)
+        if (axisUnderMouse is not null && !axisUnderMouse.IgnoreMouseInput)
         {
             // Do not respond if the axis under the mouse has no data
             // https://github.com/ScottPlot/ScottPlot/issues/3810
